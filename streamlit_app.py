@@ -6,35 +6,41 @@ import time
 import requests
 from dateutil.relativedelta import relativedelta
 
-if not hasattr(st.session_state,"longRun") :
-    st.session_state.longRun=True
-    'Starting a long computation...'
 
-    # Add a placeholder
-    latest_iteration = st.empty()
-    bar = st.progress(0)
+st.title("🎈 Filter com")
+st.write(
+    "Filter commands."
+)
 
-    for i in range(10):
-        # Update the progress bar with each iteration.
-        latest_iteration.text(f'Iteration {i+1}')
-        bar.progress(i + 1)
-        time.sleep(0.1)
+# if not hasattr(st.session_state,"longRun") :
+#     st.session_state.longRun=True
+#     'Starting a long computation...'
 
-    '...and now we\'re done!'
+#     # Add a placeholder
+#     latest_iteration = st.empty()
+#     bar = st.progress(0)
+
+#     for i in range(10):
+#         # Update the progress bar with each iteration.
+#         latest_iteration.text(f'Iteration {i+1}')
+#         bar.progress(i + 1)
+#         time.sleep(0.1)
+
+#     '...and now we\'re done!'
 
 
-x=-1
-if x<0 : x=0
-if not hasattr(st.session_state,"slider"): toto=0 
-else: toto=st.session_state.slider
-map_data = pd.DataFrame(
-    np.random.randn(100, 2) / [50, 50] + [49,toto],
-    columns=['lat', 'lon'])
+# x=-1
+# if x<0 : x=0
+# if not hasattr(st.session_state,"slider"): toto=0 
+# else: toto=st.session_state.slider
+# map_data = pd.DataFrame(
+#     np.random.randn(100, 2) / [50, 50] + [49,toto],
+#     columns=['lat', 'lon'])
 
-st.map(map_data)
+# st.map(map_data)
 
-x = st.sidebar.slider('x',key="slider")  # 👈 this is a widget
-st.write(x, 'squared is', x * x)
+# x = st.sidebar.slider('x',key="slider")  # 👈 this is a widget
+# st.write(x, 'squared is', x * x)
 
 # if st.sidebar.checkbox('Show dataframe'):
 #     chart_data = pd.DataFrame(
@@ -54,24 +60,24 @@ st.write(x, 'squared is', x * x)
 
 # 'You selected: ', option
 
-left_column, right_column = st.columns(2)
-# You can use a column just like st.sidebar:
-left_column.button('Press me!')
+# left_column, right_column = st.columns(2)
+# # You can use a column just like st.sidebar:
+# left_column.button('Press me!')
 
 # Or even better, call Streamlit functions inside a "with" block:
-with right_column:
-    chosen = st.radio(
-        'Sorting hat',
-        ("Gryffindor", "Ravenclaw", "Hufflepuff", "Slytherin"))
-    st.write(f"You are in {chosen} house!")
+# with right_column:
+#     chosen = st.radio(
+#         'Sorting hat',
+#         ("Gryffindor", "Ravenclaw", "Hufflepuff", "Slytherin"))
+#     st.write(f"You are in {chosen} house!")
 
-if "df" not in st.session_state:
-    st.session_state.df = pd.DataFrame(np.random.randn(20, 2), columns=["x", "y"])
+# if "df" not in st.session_state:
+#     st.session_state.df = pd.DataFrame(np.random.randn(20, 2), columns=["x", "y"])
 
-st.header("Choose a datapoint color")
-color = st.color_picker("Color", "#FF0000")
-st.divider()
-st.scatter_chart(st.session_state.df, x="x", y="y", color=color)
+# st.header("Choose a datapoint color")
+# color = st.color_picker("Color", "#FF0000")
+# st.divider()
+# st.scatter_chart(st.session_state.df, x="x", y="y", color=color)
 
 ## Range selector
 # cols1,_ = st.sidebar.columns((1,2)) # To make it narrower
