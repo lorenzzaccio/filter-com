@@ -102,7 +102,12 @@ data = requests.get("http://gaston.caps-tech.com:3023/api/v1/client").json()
 df = pd.DataFrame(data)
 df_splitted = df['groups'].str.split('-',n=1, expand=True)[1]
 
+@st.cache_data  # 👈 Add the caching decorator
+def load_data(url):
+    data = requests.get(url).json()
 
+    df = pd.DataFrame(data)
+    return df
 
 if not st.sidebar.checkbox('Tous les clients'):
     #'You selected: ', comboClient.split('-')[0]
@@ -114,9 +119,7 @@ comboClient = st.sidebar.selectbox(
     'Which client?',
      df, disabled=allClient,key="combo")
 
-data = requests.get("http://gaston.caps-tech.com:3023/api/v1/commandes").json()
-
-df = pd.DataFrame(data)
+df = load_data("http://gaston.caps-tech.com:3023/api/v1/commandes/2007-01-01/2024-12-31")
 
 # Show a multiselect widget with the genres using `st.multiselect`.
 status = st.sidebar.multiselect(
@@ -137,11 +140,26 @@ typeTimbre = st.sidebar.multiselect(
     df.com_type_timbre.unique(),
     ["VERT_CHAMPAGNE"],
 )
-def highlight_survived(s):
-    return ['background-color: green']*len(s) if s.com_type_timbre=="VERT_CHAMPAGNE" else ['background-color: red']*len(s)
+def highlight_vc(s):
+    if s.com_type_timbre=="VERT_CHAMPAGNE" :  return ['background-color: green']*len(s)
 
 def highlight_vc_color(s):
     return ['color: white']*len(s) if s.com_type_timbre=="VERT_CHAMPAGNE" else ['color: black']*len(s)
+def highlight_ldv(s):
+    if s.com_type_timbre=="LIE_DE_VIN" :  return ['background-color: #641835']*len(s) 
+    if s.com_type_timbre=="VERT_CHAMPAGNE" :  return ['background-color: green']*len(s)
+    if s.com_type_timbre=="VERT" :  return ['background-color: #90EE90']*len(s)
+    if s.com_type_timbre=="BLEU" :  return ['background-color: blue']*len(s)
+    if s.com_type_timbre=="BLANC_VAT_18%" :  return ['background-color: beige']*len(s)
+    if s.com_type_timbre=="BLANC_VAT_40%" :  return ['background-color: beige']*len(s)
+    if s.com_type_timbre=="GRIS" :  return ['background-color: #898989']*len(s)
+    if s.com_type_timbre=="EXPORT" :  return ['background-color: #EDC9F9']*len(s)
+    else:
+        return ['background-color: white']*len(s)
+
+def highlight_ldv_color(s):
+    return ['color: white']*len(s) if s.com_type_timbre=="LIE_DE_VIN" else ['color: black']*len(s)
+
 
 #df_filtered = df[(df["com_date_livraison"].between(years[0]+"-01-01", years[1]+"01-01"))]
 
@@ -165,7 +183,8 @@ else:
                      & df["com_type_timbre"].isin(typeTimbre)   
                      ]
 
-styled_df = filtered_df.style.apply(highlight_survived,axis=1).apply(highlight_vc_color,axis=1)
+styled_df = filtered_df.style.apply(highlight_ldv,axis=1).apply(highlight_ldv_color,axis=1)
+
 # Display the data as a table using `st.dataframe`.
 st.dataframe(
     styled_df,
