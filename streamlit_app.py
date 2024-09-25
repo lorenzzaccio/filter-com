@@ -119,7 +119,7 @@ comboClient = st.sidebar.selectbox(
     'Which client?',
      df, disabled=allClient,key="combo")
 
-df = load_data("http://gaston.caps-tech.com:3023/api/v1/commandes/2007-01-01/2024-12-31")
+df = load_data(st.secrets["COM_URL"])
 
 # Show a multiselect widget with the genres using `st.multiselect`.
 status = st.sidebar.multiselect(
@@ -152,7 +152,7 @@ def highlight_ldv(s):
     if s.com_type_timbre=="BLEU" :  return ['background-color: blue']*len(s)
     if s.com_type_timbre=="BLANC_VAT_18%" :  return ['background-color: beige']*len(s)
     if s.com_type_timbre=="BLANC_VAT_40%" :  return ['background-color: beige']*len(s)
-    if s.com_type_timbre=="GRIS" :  return ['background-color: #898989']*len(s)
+    if s.com_type_timbre=="GRIS" :  return ['background-color: #EEEEEE']*len(s)
     if s.com_type_timbre=="EXPORT" :  return ['background-color: #EDC9F9']*len(s)
     else:
         return ['background-color: white']*len(s)
