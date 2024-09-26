@@ -6,6 +6,36 @@ import time
 import requests
 from dateutil.relativedelta import relativedelta
 
+st.set_page_config(
+   page_title="Ex-stream-ly Cool App",
+   page_icon="🧊",
+   layout="wide",
+   initial_sidebar_state="expanded",
+)
+
+percentage_width_main = 100
+# Inject custom CSS to set the width of the sidebar
+st.markdown(
+    """
+    <style>
+        section[data-testid="stSidebar"] {
+            width: 500px !important; # Set the width to your desired value
+        }
+   
+        .appview-container .main .block-container{{
+            max-width: {percentage_width_main}%;
+            padding-top: {1}rem;
+            padding-right: {1}rem;
+            padding-left: {1}rem;
+            padding-bottom: {1}rem;
+              }}
+        .uploadedFile {{display: none}}
+        footer {{visibility: hidden;}}
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 
 st.title("🎈 Filter com")
 st.write(
@@ -16,14 +46,9 @@ format = 'MMM DD, YYYY'  # format output
 start_date = dt.date(year=2007,month=1,day=1)-relativedelta(years=0)  #  I need some range in the past
 end_date = dt.datetime.now().date()-relativedelta(years=0)
 max_days = end_date-start_date
-d =  dt.datetime.now().date()-relativedelta(years=1)
-# slider = st.sidebar.slider('Years', min_value=start_date, value=end_date ,max_value=end_date, format=format)        
+d =  dt.datetime.now().date()-relativedelta(days=100)     
 years = st.sidebar.slider('Years', start_date, end_date ,(d,end_date), format=format)
 
-#combo client
-data = requests.get("http://gaston.caps-tech.com:3023/api/v1/client").json()
-df = pd.DataFrame(data)
-df_splitted = df['groups'].str.split('-',n=1, expand=True)[1]
 
 @st.cache_data  # 👈 Add the caching decorator
 def load_data(url):
@@ -32,26 +57,25 @@ def load_data(url):
     df = pd.DataFrame(data)
     return df
 
+# #combo client
+df = load_data(st.secrets["CLIENT_URL"])
+df_splitted = df['groups'].str.split('-',n=1, expand=True)[1]
 if not st.sidebar.checkbox('Tous les status'):
-    #'You selected: ', comboClient.split('-')[0]
     allStatus = False
 else:
     allStatus=True
 
 if not st.sidebar.checkbox('Tous les timbres'):
-    #'You selected: ', comboClient.split('-')[0]
     allTimbre = False
 else:
     allTimbre=True
 
 if not st.sidebar.checkbox('Toutes les centilisations'):
-    #'You selected: ', comboClient.split('-')[0]
     allCentili = False
 else:
     allCentili=True
 
 if not st.sidebar.checkbox('Tous les clients'):
-    #'You selected: ', comboClient.split('-')[0]
     allClient = False
 else:
     allClient=True
@@ -154,15 +178,16 @@ st.dataframe(
                         "date",
                         format="YYYY-MM-DD",
                     ),
-                  "sitecli_texteFiscal": st.column_config.TextColumn("texte"),
-                  "sitecli_addr1": st.column_config.TextColumn("client"),
-                  "com_ref_article_client": st.column_config.TextColumn("ref"),
-                   "com_quantite": st.column_config.TextColumn("quantité"),
+                  "sitecli_texteFiscal": st.column_config.TextColumn("texte",width='small'),
+                  "sitecli_addr1": st.column_config.TextColumn("client",width='small'),
+                  "com_ref_article_client": st.column_config.TextColumn("ref",width='large'),
+                   "com_quantite": st.column_config.TextColumn("quantité",width='small'),
                    "com_prix_au_mille_ht": st.column_config.NumberColumn(
                         "Prix",
                         help="The price of the product in euros",
                         step=0.01,
                         format="€ %.2d",
+                        width='small'
                     ),
                     "":None,
                      "com_centilisation":None,
